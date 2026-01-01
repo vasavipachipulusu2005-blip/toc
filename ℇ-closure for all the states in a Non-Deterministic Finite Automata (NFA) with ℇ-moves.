@@ -1,0 +1,77 @@
+#include <stdio.h>
+
+int trans[10][5][10];   // transition table
+int eclosure[10][10];  // epsilon closure
+int visited[10];
+int nstates, nsymbols;
+
+void find_eclosure(int s, int curr) {
+    int i;
+    for (i = 0; i < nstates; i++) {
+        if (trans[curr][0][i] == 1 && !visited[i]) { // ε is index 0
+            visited[i] = 1;
+            eclosure[s][i] = 1;
+            find_eclosure(s, i);
+        }
+    }
+}
+
+int main() {
+    int i, j, k;
+    char symbols[5];
+
+    printf("Enter number of states: ");
+    scanf("%d", &nstates);
+
+    printf("Enter number of symbols (including e): ");
+    scanf("%d", &nsymbols);
+
+    printf("Enter symbols (e first): ");
+    scanf("%s", symbols);
+
+    // Initialize transition table
+    for (i = 0; i < nstates; i++)
+        for (j = 0; j < nsymbols; j++)
+            for (k = 0; k < nstates; k++)
+                trans[i][j][k] = 0;
+
+    // Input transitions
+    for (i = 0; i < nstates; i++) {
+        for (j = 0; j < nsymbols; j++) {
+            int n, to;
+            printf("How many transitions from state %d on %c: ", i, symbols[j]);
+            scanf("%d", &n);
+            for (k = 0; k < n; k++) {
+                scanf("%d", &to);
+                trans[i][j][to] = 1;
+            }
+        }
+    }
+
+    // Initialize epsilon closure
+    for (i = 0; i < nstates; i++)
+        for (j = 0; j < nstates; j++)
+            eclosure[i][j] = 0;
+
+    // Compute ε-closure
+    for (i = 0; i < nstates; i++) {
+        for (j = 0; j < nstates; j++)
+            visited[j] = 0;
+
+        visited[i] = 1;
+        eclosure[i][i] = 1;
+        find_eclosure(i, i);
+    }
+
+    // Print ε-closure
+    for (i = 0; i < nstates; i++) {
+        printf("ε-closure(%d) = { ", i);
+        for (j = 0; j < nstates; j++) {
+            if (eclosure[i][j])
+                printf("%d ", j);
+        }
+        printf("}\n");
+    }
+
+    return 0;
+}
