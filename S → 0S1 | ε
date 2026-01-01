@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char s[50];
+    int i = 0, j;
+
+    printf("Enter string: ");
+    scanf("%s", s);
+
+    j = strlen(s) - 1;
+
+    while (i < j && s[i] == '0' && s[j] == '1') {
+        i++;
+        j--;
+    }
+
+    if (i > j)
+        printf("Accepted\n");
+    else
+        printf("Rejected\n");
+
+    return 0;
+}
